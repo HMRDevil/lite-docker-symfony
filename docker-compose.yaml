@@ -1,0 +1,49 @@
+services:
+
+    nginx:
+      image: nginx:stable-alpine
+      build:
+        context: .
+        dockerfile: ./docker/nginx/Dockerfile
+      container_name: nginx-container
+      restart: always
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - ./app:/var/www/html:ro,cached
+      depends_on:
+        - php
+      networks:
+        - symfony
+
+    php:
+      build:
+        context: .
+        dockerfile: ./docker/php/Dockerfile
+      container_name: php-container
+      volumes:
+        - ./app:/var/www/html:cached
+      depends_on:
+        - mysql
+      networks:
+        - symfony
+
+    mysql:
+      image: mysql:8
+      container_name: container-mysql
+      command: --innodb-use-native-aio=${INNODB_USE_NATIVE_AIO:-1} --sql_mode=${SQL_MODE:-"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"}
+      environment:
+        MYSQL_ROOT_PASSWORD: secret
+        MYSQL_DATABASE: symfony
+      ports:
+        - "33061:3306"
+      volumes:
+        - ./var/mysql-data:/var/lib/mysql:delegated
+        - ./docker/mysql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      networks:
+        - symfony
+
+networks:
+  symfony:
+    name: symfony
