@@ -2,9 +2,9 @@
 
 ### Как использовать
 ```
-Клонировать репозиторий
-git clone  docker_project_name
-Перейти в него и залить в папку app свое Symfony-приложение со всеми зависимостями
+Клонировать репозиторий:
+git clone https://github.com/HMRDevil/lite-docker-symfony.git docker_project_name
+Перейти в него и залить в папку /app Symfony-приложение со всеми зависимостями
 В .env файле Symfony-приложения настроить подключение к БД
 DATABASE_URL="mysql://root:secret@mysql:3306/symfony?serverVersion=8.4.0&charset=utf8mb4"
 Добавить в хост файл запись:
